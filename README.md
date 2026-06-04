@@ -8,8 +8,8 @@ He left the ninety-nine. He came for **you**.
 
 <br>
 
-![Expo](https://img.shields.io/badge/Expo-SDK%2056-000020?logo=expo&logoColor=white)
-![React Native](https://img.shields.io/badge/React%20Native-0.85-61DAFB?logo=react&logoColor=000)
+![Expo](https://img.shields.io/badge/Expo-SDK%2054-000020?logo=expo&logoColor=white)
+![React Native](https://img.shields.io/badge/React%20Native-0.81-61DAFB?logo=react&logoColor=000)
 ![Platforms](https://img.shields.io/badge/iOS%20·%20Android%20·%20Web-one%20codebase-444)
 ![Scripture](https://img.shields.io/badge/KJV-public%20domain-e3a155)
 ![Status](https://img.shields.io/badge/status-POC-9cb8e0)
@@ -52,7 +52,7 @@ One JavaScript codebase ships to **iOS, Android, and web**.
 
 | Layer | Choice | Why |
 |---|---|---|
-| **Framework** | [Expo](https://expo.dev) (SDK 56) + React Native 0.85 | One codebase, three platforms, zero native toolchain to start |
+| **Framework** | [Expo](https://expo.dev) (SDK 54) + React Native 0.81 | One codebase, three platforms, zero native toolchain to start. SDK 54 is what the current **Expo Go** app supports. |
 | **UI** | React 19 + `StyleSheet` / `Pressable` | Native components, no heavy UI lib for a POC |
 | **Atmosphere** | `expo-linear-gradient` | The desert-dusk background + per-voice horizon glow |
 | **State** | React `useState` | Two screens, driven by simple state — no router/store needed |
