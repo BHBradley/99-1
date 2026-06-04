@@ -1,0 +1,323 @@
+<!doctype html>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>The 99 — a word for the wilderness</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300..700;1,9..144,300..600&family=Hanken+Grotesk:wght@400;500;600&family=Newsreader:ital,opsz,wght@1,6..72,300..500&display=swap" rel="stylesheet">
+
+<style>
+  :root{
+    --bg:#0b0a12;
+    --bg2:#15121f;
+    --ink:#f4ede0;
+    --muted:#b9ad98;
+    --faint:#6f6757;
+    --accent:#e3a155;        /* candlelight default (Shepherd) */
+    --glow:rgba(227,161,85,.5);
+    --card:rgba(255,250,240,.035);
+    --line:rgba(255,245,225,.10);
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  html,body{height:100%}
+  body{
+    font-family:"Hanken Grotesk",system-ui,sans-serif;
+    color:var(--ink);
+    background:var(--bg);
+    -webkit-font-smoothing:antialiased;
+    overflow-x:hidden;
+    min-height:100%;
+    position:relative;
+  }
+  /* layered desert-dusk atmosphere */
+  .sky{
+    position:fixed; inset:0; z-index:-3;
+    background:
+      radial-gradient(120% 80% at 50% 120%, var(--glow) 0%, rgba(0,0,0,0) 42%),
+      radial-gradient(90% 60% at 80% 0%, rgba(90,70,140,.22) 0%, rgba(0,0,0,0) 55%),
+      linear-gradient(180deg, var(--bg) 0%, var(--bg2) 55%, #060509 100%);
+    transition:background 1.2s ease;
+  }
+  .dunes{
+    position:fixed; left:0; right:0; bottom:0; height:38vh; z-index:-2;
+    background:
+      radial-gradient(140% 100% at 50% 160%, rgba(0,0,0,.55), rgba(0,0,0,0) 60%);
+    -webkit-mask:radial-gradient(120% 100% at 50% 140%, #000 60%, transparent 61%);
+            mask:radial-gradient(120% 100% at 50% 140%, #000 60%, transparent 61%);
+  }
+  /* film grain */
+  .grain{
+    position:fixed; inset:-50%; z-index:-1; pointer-events:none; opacity:.05;
+    background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='120'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='2'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+  }
+  /* drifting embers */
+  .ember{position:fixed;bottom:-10px;width:3px;height:3px;border-radius:50%;
+    background:var(--accent);box-shadow:0 0 8px 1px var(--glow);z-index:-1;opacity:0;
+    animation:rise linear infinite}
+  @keyframes rise{
+    0%{transform:translateY(0) translateX(0);opacity:0}
+    12%{opacity:.7}
+    90%{opacity:.5}
+    100%{transform:translateY(-104vh) translateX(var(--drift,20px));opacity:0}
+  }
+
+  .wrap{max-width:760px;margin:0 auto;padding:clamp(28px,7vh,80px) 24px 96px;
+    display:flex;flex-direction:column;min-height:100vh}
+
+  /* ---------- header ---------- */
+  .top{display:flex;align-items:center;justify-content:space-between;gap:16px}
+  .brand{display:flex;align-items:baseline;gap:.5ch;font-family:"Fraunces",serif;
+    font-weight:400;letter-spacing:.01em}
+  .brand b{font-weight:600}
+  .brand .num{color:var(--accent);font-style:italic}
+  .date{font-size:.78rem;letter-spacing:.14em;text-transform:uppercase;color:var(--faint)}
+
+  /* ---------- intro / mode picker ---------- */
+  .hero{margin-top:clamp(40px,9vh,90px);text-align:center}
+  .kicker{font-size:.74rem;letter-spacing:.34em;text-transform:uppercase;color:var(--accent);
+    margin-bottom:22px;opacity:.9}
+  .hero h1{font-family:"Fraunces",serif;font-weight:300;line-height:1.04;
+    font-size:clamp(2.5rem,8vw,4.4rem);letter-spacing:-.02em}
+  .hero h1 em{font-style:italic;color:var(--accent)}
+  .lede{margin:26px auto 0;max-width:46ch;color:var(--muted);font-size:1.02rem;line-height:1.7}
+
+  .picklabel{margin:clamp(46px,9vh,84px) 0 22px;text-align:center;
+    font-size:.74rem;letter-spacing:.3em;text-transform:uppercase;color:var(--faint)}
+  .modes{display:grid;grid-template-columns:repeat(2,1fr);gap:14px}
+  @media(max-width:560px){.modes{grid-template-columns:1fr}}
+  .mode{position:relative;text-align:left;cursor:pointer;border:1px solid var(--line);
+    background:var(--card);border-radius:18px;padding:22px 22px 20px;color:inherit;
+    font:inherit;transition:transform .35s cubic-bezier(.2,.8,.2,1),border-color .35s,background .35s;
+    overflow:hidden}
+  .mode:hover{transform:translateY(-4px);border-color:var(--mc);background:rgba(255,250,240,.06)}
+  .mode:hover .glyph{transform:scale(1.08) rotate(-3deg)}
+  .mode::after{content:"";position:absolute;inset:0;border-radius:18px;pointer-events:none;
+    box-shadow:inset 0 0 60px -20px var(--mc);opacity:0;transition:opacity .35s}
+  .mode:hover::after{opacity:1}
+  .glyph{font-size:1.7rem;display:inline-block;transition:transform .4s ease;filter:saturate(1.1)}
+  .mode h3{font-family:"Fraunces",serif;font-weight:500;font-size:1.45rem;margin:12px 0 6px;
+    color:var(--mc)}
+  .mode p{color:var(--muted);font-size:.92rem;line-height:1.55}
+
+  /* ---------- verse view ---------- */
+  .stage{flex:1;display:none;flex-direction:column;justify-content:center;
+    align-items:center;text-align:center;padding-top:clamp(30px,8vh,70px)}
+  .stage.on{display:flex;animation:fade .9s ease both}
+  .voicetag{display:inline-flex;align-items:center;gap:9px;font-size:.72rem;
+    letter-spacing:.26em;text-transform:uppercase;color:var(--accent);
+    border:1px solid var(--line);padding:7px 15px;border-radius:999px;margin-bottom:34px}
+  .voicetag .dot{width:6px;height:6px;border-radius:50%;background:var(--accent);
+    box-shadow:0 0 10px 1px var(--glow)}
+  .word{max-width:30ch;color:var(--muted);font-size:1.06rem;line-height:1.6;margin-bottom:30px}
+  blockquote.verse{font-family:"Newsreader",serif;font-style:italic;font-weight:300;
+    font-size:clamp(1.7rem,5vw,2.7rem);line-height:1.3;letter-spacing:-.01em;
+    max-width:18ch;color:var(--ink);position:relative}
+  blockquote.verse::before{content:"\201C";position:absolute;left:-.55ch;top:-.25em;
+    font-size:2.4em;color:var(--accent);opacity:.32;font-family:"Fraunces",serif}
+  .ref{margin-top:28px;font-size:.8rem;letter-spacing:.24em;text-transform:uppercase;color:var(--accent)}
+  .trans{font-size:.7rem;letter-spacing:.18em;text-transform:uppercase;color:var(--faint);margin-top:8px}
+
+  .controls{display:flex;gap:12px;align-items:center;margin-top:46px;flex-wrap:wrap;justify-content:center}
+  .btn{font:inherit;cursor:pointer;border-radius:999px;padding:13px 26px;font-size:.86rem;
+    letter-spacing:.05em;border:1px solid var(--accent);background:var(--accent);color:#1a130a;
+    font-weight:600;transition:transform .2s,box-shadow .3s,opacity .3s}
+  .btn:hover{transform:translateY(-2px);box-shadow:0 10px 30px -10px var(--glow)}
+  .btn:active{transform:translateY(0)}
+  .ghost{background:transparent;color:var(--muted);border-color:var(--line);font-weight:500}
+  .ghost:hover{color:var(--ink);border-color:var(--muted);box-shadow:none}
+
+  .fader{animation:fade .7s ease both}
+  @keyframes fade{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:none}}
+  .up{opacity:0;animation:fade .8s ease forwards}
+  .up.d1{animation-delay:.08s}.up.d2{animation-delay:.18s}.up.d3{animation-delay:.3s}
+  .up.d4{animation-delay:.44s}
+
+  footer{margin-top:auto;padding-top:40px;text-align:center;color:var(--faint);font-size:.74rem;letter-spacing:.04em}
+</style>
+
+<div class="sky" id="sky"></div>
+<div class="dunes"></div>
+<div class="grain"></div>
+
+<div class="wrap">
+  <div class="top up d1">
+    <div class="brand">The&nbsp;<b>99</b> <span class="num">&divide; 1</span></div>
+    <div class="date" id="date">—</div>
+  </div>
+
+  <!-- PICKER -->
+  <section id="home">
+    <div class="hero">
+      <div class="kicker up d1">For the one in the wilderness</div>
+      <h1 class="up d2">He left the ninety-nine.<br><em>He came for you.</em></h1>
+      <p class="lede up d3">Prodigal. Black sheep. Lost in the dry land. Whatever voice you need
+        to hear it in today — choose, and receive your word.</p>
+    </div>
+    <div class="picklabel up d4">Choose your voice</div>
+    <div class="modes up d4" id="modeGrid"></div>
+  </section>
+
+  <!-- VERSE STAGE -->
+  <section class="stage" id="stage">
+    <div class="voicetag"><span class="dot"></span><span id="vName">—</span></div>
+    <p class="word" id="word">—</p>
+    <blockquote class="verse" id="verse">—</blockquote>
+    <div class="ref" id="ref">—</div>
+    <div class="trans">King James Version</div>
+    <div class="controls">
+      <button class="btn" id="another">Pull another word</button>
+      <button class="btn ghost" id="back">&larr; Change voice</button>
+    </div>
+  </section>
+
+  <footer>The 99 &middot; a daily word for the ones still finding their way home</footer>
+</div>
+
+<script>
+/* ----------  THE VOICES  ---------- */
+const MODES = {
+  shepherd:{
+    name:"The Shepherd", glyph:"🕯️", color:"#e3a155", glow:"rgba(227,161,85,.5)",
+    blurb:"You were sought on purpose. Gentle reminders that you are not a number — you are the one.",
+    verses:[
+      {t:"What man of you, having an hundred sheep, if he lose one of them, doth not leave the ninety and nine, and go after that which is lost, until he find it?", r:"Luke 15:4",
+       w:"You imagine being left behind. Read it again — you're the one He goes after."},
+      {t:"Joy shall be in heaven over one sinner that repenteth, more than over ninety and nine just persons.", r:"Luke 15:7",
+       w:"Heaven isn't disappointed in you. Heaven is throwing a party the day you turn around."},
+      {t:"But when he was yet a great way off, his father saw him, and had compassion, and ran, and fell on his neck, and kissed him.", r:"Luke 15:20",
+       w:"He saw you while you were still far off. He didn't wait for you to arrive — He ran."},
+      {t:"For the Son of man is come to seek and to save that which was lost.", r:"Luke 19:10",
+       w:"Being lost isn't disqualifying. It's the exact thing He came looking for."},
+      {t:"I will seek that which was lost, and bring again that which was driven away, and will bind up that which was broken.", r:"Ezekiel 34:16",
+       w:"Not just found — bound up, healed, brought home. He finishes what He starts."},
+      {t:"Fear not: for I have redeemed thee, I have called thee by thy name; thou art mine.", r:"Isaiah 43:1",
+       w:"He knows your name. Not the crowd's name — yours."},
+    ]},
+  comforter:{
+    name:"The Comforter", glyph:"🤍", color:"#9cb8e0", glow:"rgba(156,184,224,.45)",
+    blurb:"For the heavy days. A soft place to land when getting up feels like too much.",
+    verses:[
+      {t:"The LORD is nigh unto them that are of a broken heart; and saveth such as be of a contrite spirit.", r:"Psalm 34:18",
+       w:"He doesn't keep His distance from your lowest day. That's exactly where He draws near."},
+      {t:"Come unto me, all ye that labour and are heavy laden, and I will give you rest.", r:"Matthew 11:28",
+       w:"You don't have to fix yourself first. Bring the weight as it is. Rest is the invitation."},
+      {t:"He healeth the broken in heart, and bindeth up their wounds.", r:"Psalm 147:3",
+       w:"The same hands that named the stars are gentle enough for your wounds."},
+      {t:"Why art thou cast down, O my soul? hope thou in God: for I shall yet praise him.", r:"Psalm 42:11",
+       w:"Even the psalmist had to talk to his own heavy heart. You're in good company. The word is: yet."},
+      {t:"Weeping may endure for a night, but joy cometh in the morning.", r:"Psalm 30:5",
+       w:"The night is real. So is the morning. Don't let the dark convince you it's permanent."},
+      {t:"His compassions fail not. They are new every morning: great is thy faithfulness.", r:"Lamentations 3:22-23",
+       w:"Yesterday's mercy ran out — and there's a fresh batch waiting for you today."},
+    ]},
+  fire:{
+    name:"The Fire", glyph:"🔥", color:"#ef7d3a", glow:"rgba(239,125,58,.5)",
+    blurb:"When you need to get up. Bold, loud, get-off-the-floor energy for the comeback.",
+    verses:[
+      {t:"They that wait upon the LORD shall renew their strength; they shall mount up with wings as eagles; they shall run, and not be weary.", r:"Isaiah 40:31",
+       w:"You're not running on your own tank anymore. Renewed strength is on the table. Get up."},
+      {t:"Behold, I will do a new thing; now it shall spring forth. I will even make a way in the wilderness, and rivers in the desert.", r:"Isaiah 43:19",
+       w:"That dry season you're in? He specializes in putting rivers exactly where there's no water."},
+      {t:"I can do all things through Christ which strengtheneth me.", r:"Philippians 4:13",
+       w:"Not on a good day. Not when you feel it. All things — borrowed strength, not your own."},
+      {t:"Be strong and of a good courage; be not afraid: for the LORD thy God is with thee whithersoever thou goest.", r:"Joshua 1:9",
+       w:"That's not a suggestion — it's a command, backed by a promise. Move."},
+      {t:"If God be for us, who can be against us?", r:"Romans 8:31",
+       w:"Count the room. The only opinion that outweighs the rest is already on your side."},
+      {t:"For God hath not given us the spirit of fear; but of power, and of love, and of a sound mind.", r:"2 Timothy 1:7",
+       w:"That fear talking you out of it? Not from Him. Check the return address."},
+    ]},
+  real:{
+    name:"The Real One", glyph:"⚡", color:"#d8c08a", glow:"rgba(216,192,138,.42)",
+    blurb:"Straight talk, no fluff. Tough love for the wilderness that's actually building you.",
+    verses:[
+      {t:"For a just man falleth seven times, and riseth up again.", r:"Proverbs 24:16",
+       w:"Falling isn't the headline. The number that defines you is the getting-up count."},
+      {t:"Let us not be weary in well doing: for in due season we shall reap, if we faint not.", r:"Galatians 6:9",
+       w:"The harvest is late, not cancelled. Don't quit one season before it shows up."},
+      {t:"Thou shalt remember all the way which the LORD thy God led thee these forty years in the wilderness, to humble thee, and to prove thee.", r:"Deuteronomy 8:2",
+       w:"The desert wasn't a detour. It was the training. Stop asking to skip the part that's making you."},
+      {t:"Blessed is the man that endureth temptation: for when he is tried, he shall receive the crown of life.", r:"James 1:12",
+       w:"Nobody's handing out crowns for comfort. The trial you're hating is the qualifier."},
+      {t:"Tribulation worketh patience; and patience, experience; and experience, hope.", r:"Romans 5:3-4",
+       w:"There's an actual order to this. The pressure isn't random — it's manufacturing something."},
+      {t:"In the world ye shall have tribulation: but be of good cheer; I have overcome the world.", r:"John 16:33",
+       w:"He told you it'd be hard so the hard wouldn't shake you. It's not a surprise. It's not the end."},
+    ]},
+};
+
+/* ----------  STATE + HELPERS  ---------- */
+let current=null, shuffle=0;
+const dayNumber = Math.floor(Date.now()/864e5);
+
+function setTheme(m){
+  const root=document.documentElement.style;
+  root.setProperty('--accent', m.color);
+  root.setProperty('--glow', m.glow);
+}
+
+function renderModes(){
+  const grid=document.getElementById('modeGrid');
+  grid.innerHTML='';
+  for(const key in MODES){
+    const m=MODES[key];
+    const b=document.createElement('button');
+    b.className='mode'; b.style.setProperty('--mc',m.color);
+    b.innerHTML=`<span class="glyph">${m.glyph}</span>
+      <h3>${m.name}</h3><p>${m.blurb}</p>`;
+    b.onclick=()=>choose(key);
+    grid.appendChild(b);
+  }
+}
+
+function choose(key){
+  current=key; shuffle=0;
+  setTheme(MODES[key]);
+  document.getElementById('home').style.display='none';
+  document.getElementById('stage').classList.add('on');
+  paint(true);
+}
+
+function paint(daily){
+  const m=MODES[current];
+  const i = daily ? (dayNumber % m.verses.length)
+                  : ((dayNumber + shuffle) % m.verses.length);
+  const v=m.verses[i];
+  const stage=document.getElementById('stage');
+  // re-trigger reveal
+  ['vName','word','verse','ref'].forEach(id=>{
+    const el=document.getElementById(id); el.classList.remove('fader'); void el.offsetWidth; el.classList.add('fader');
+  });
+  document.getElementById('vName').textContent=m.name;
+  document.getElementById('word').textContent=v.w;
+  document.getElementById('verse').textContent=v.t;
+  document.getElementById('ref').textContent=v.r;
+}
+
+document.getElementById('another').onclick=()=>{ shuffle++; paint(false); };
+document.getElementById('back').onclick=()=>{
+  document.getElementById('stage').classList.remove('on');
+  document.documentElement.style.setProperty('--accent','#e3a155');
+  document.documentElement.style.setProperty('--glow','rgba(227,161,85,.5)');
+  const h=document.getElementById('home'); h.style.display='block';
+};
+
+/* date label */
+document.getElementById('date').textContent =
+  new Date().toLocaleDateString(undefined,{weekday:'long',month:'long',day:'numeric'});
+
+/* embers */
+(function(){
+  for(let i=0;i<14;i++){
+    const e=document.createElement('div'); e.className='ember';
+    e.style.left=(Math.random()*100)+'vw';
+    e.style.setProperty('--drift',(Math.random()*60-30)+'px');
+    const dur=9+Math.random()*12;
+    e.style.animationDuration=dur+'s';
+    e.style.animationDelay=(-Math.random()*dur)+'s';
+    document.body.appendChild(e);
+  }
+})();
+
+renderModes();
+</script>
